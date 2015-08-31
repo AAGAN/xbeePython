@@ -39,6 +39,16 @@ def update2():
     b2frame.config(bg = bucket_2.ledColor)
     calWeight2.delete(0,END)
     calWeight2.insert(0, str(txt))
+    bucket_2.requestValveState(xbee)
+    if bucket_2.valveState == "open":
+        b2open.config(bg = "green")
+        b2close.config(bg = "white")
+    elif bucket_2.valveState == "close":
+        b2open.config(bg = "white")
+        b2close.config(bg = "green")
+    elif bucket_2.valveState == "halfOpen":
+        b2open.config(bg = "red")
+        b2close.config(bg = "red")
 
 def update1():
     bucket_1.readSensor(xbee)
@@ -48,6 +58,16 @@ def update1():
     b1frame.config(bg = bucket_1.ledColor)
     calWeight1.delete(0,END)
     calWeight1.insert(0,str(txt))
+    #bucket_1.requestValveState(xbee)
+    if bucket_1.valveState == "open":
+        b1open.config(bg = "green")
+        b1close.config(bg = "white")
+    elif bucket_1.valveState == "close":
+        b1open.config(bg = "white")
+        b1close.config(bg = "green")
+    elif bucket_1.valveState == "halfOpen":
+        b1open.config(bg = "red")
+        b1close.config(bg = "red")
 
 def Calibrate1():
     update1()
