@@ -1,10 +1,13 @@
 ﻿import struct
+import random
+import time
 
 class Buckets:
 
     adcValue = 0.0
     weightValue = 0.0
     tareValue=0.0
+    valveState = "halfOpen"
 
     def __init__(self, num = 0, addr64 = '\x00\x00\x00\x00\x00\x00\x00\x00', addr16 = '\xFF\xFE', cor1 = 1, cor2 = 0, color = 'red', xbee = None):
         self.number = num
@@ -17,18 +20,21 @@ class Buckets:
         print "Bucket initiated"
         print ":".join("{:02x}".format(ord(c)) for c in self.address64)
 
+    def addressPrint(self, addresss):
+        print ":".join("{:02x}".format(ord(c)) for c in addresss)
+
     def __str__():
         print "Object for bucket %d" % self.number
 
     def openValve(self, xbee):
         #function to be called to open the ball valve
         self.xbee.send("tx", dest_addr_long=self.address64,dest_addr=self.address16,data='\x6F')
-        self.valveState = 'open'
+        self.valveState = "open"
 
     def closeValve(self, xbee):
         #function to be called to close the ball valve
         self.xbee.send("tx", dest_addr_long=self.address64,dest_addr=self.address16,data='\x63')
-        self.valveState = 'close'
+        self.valveState = "close"
 
     def displayColor(self, xbee, color):
         #function to set the color of the bucket based on the data and turn the led on with that color
@@ -53,16 +59,18 @@ class Buckets:
         pass
 
     def requestSensorData(self, xbee):
-        frameID = '1' #random.randomint(0,255)
+        frameID = chr(random.randint(0,255))
         xbee.send("tx", frame_id=frameID, dest_addr_long=self.address64, dest_addr=self.address16, data='\x73')
         response = xbee.wait_read_frame()
-        print response
-        if response['id']=='tx_status' and response['frame_id']==frameID and response['deliver_status']=='\x00':
-            print "request successfully received!\n"
-            print "Delivery Status:" + response['deliver_status'] +"\n"
-        else:
-            print "requestSensorData not received!"
-            print "Delivery Status:" + response['deliver_status']+"\n"
+        #print response
+        if response['id']=='tx_status':
+            if response['frame_id']==frameID and response['deliver_status']=='\x00':
+                pass
+                #print "request successfully received!\n"
+                #print "Delivery Status:" + str(hex(ord(response['deliver_status'])))
+            else:
+                print "requestSensorData not received!"
+                print "Delivery Status:" + str(hex(ord(response['deliver_status'])))
         
     def readSensor(self, xbee):
         self.requestSensorData(xbee)
@@ -86,3 +94,32 @@ class Buckets:
     def tare(self, xbee):
         self.readSensor(xbee)
         self.tareValue = self.adcValue
+
+    def requestValveState(self,xbee):
+        frameID = chr(random.randint(0,255))
+        xbee.send("tx", frame_id = frameID, dest_addr_long=self.address64,dest_addr=self.address16, data='\x76')
+        ID = ' '
+        while ID != 'rx':
+            try:
+                response = xbee.wait_read_frame()
+                ID = response['id']
+                if ID == 'rx':  
+                    if response['source_addr_long'] == self.address64:
+                        Response = response['rf_data'] 
+                        Response = float(struct.unpack('H',Response)[0])
+                        print Response
+                        if Response == 0:
+                            self.valveState = "open"
+                        elif Response == 1:
+                            self.valveState = "close"
+                        elif Response == 2:
+                            self.valveState = "halfOpen"
+                    else:
+                        print "-------Error---------"
+                        print ID
+                        self.addressPrint(response['source_addr_long'])
+                        print response['frame_id']
+            except KeyboardInterrupt:
+                break
+        pass
+
