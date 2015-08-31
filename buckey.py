@@ -69,7 +69,7 @@ def calculateDensity(Grams,duration=20,area = 1):
 
 def calculateColor(weightGRAMS, duration = 20, area = 1, bucket=None):
     density = calculateDensity(weightGRAMS, duration, area)
-    print "density = " + str(density)
+    #print "density = " + str(density)
     if density >= 0.03:
         color = "blue"
     elif density >= 0.025 and density < 0.03:
@@ -82,7 +82,7 @@ def calculateColor(weightGRAMS, duration = 20, area = 1, bucket=None):
         color = "red"
     else:
         color = "black"
-    print color
+    # print color
     bucket.ledColor = color
 
 b1read = Button(bottomframe, text="read data", bg="white", command=update1)
