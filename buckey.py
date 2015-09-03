@@ -36,12 +36,10 @@ bottomframe.grid(row=1,column=0)
 def update2():
     bucket_2.readSensor(xbee)
     txt = (bucket_2.adcValue-bucket_2.tareValue)*float(b2m.get()) + float(b2b.get())
-    bucket2Density.config(text=str(calculateDensity(Grams=float(txt))))
+    bucket2Density.config(text=str("{:5.3f}".format(calculateDensity(Grams=float(txt)))))
     calculateColor(weightGRAMS=float(txt),bucket=bucket_2)
     b2frame.config(bg = bucket_2.ledColor)
-    bucket2Grams.config(text=str(txt))
-    #calWeight2.delete(0,END)
-    #calWeight2.insert(0, str(txt))
+    bucket2Grams.config(text=str(int(txt)))
     bucket_2.requestValveState(xbee)
     if bucket_2.valveState == "open":
         b2open.config(bg = "green")
@@ -54,30 +52,30 @@ def update2():
         b2close.config(bg = "red")
 
 def update1():
-    bucket_1.readSensor(xbee)
-    txt = (bucket_1.adcValue-bucket_1.tareValue)*float(b1m.get()) + float(b1b.get())
-    bucket1Density.config(text=str(calculateDensity(Grams=float(txt))))
-    calculateColor(weightGRAMS=float(txt),bucket=bucket_1)
-    b1frame.config(bg = bucket_1.ledColor)
-    bucket1Grams.config(text=str(txt))
-    #calWeight1.delete(0,END)
-    #calWeight1.insert(0,str(txt))
-    bucket_1.requestValveState(xbee)
-    if bucket_1.valveState == "open":
-        b1open.config(bg = "green")
-        b1close.config(bg = "white")
-    elif bucket_1.valveState == "close":
-        b1open.config(bg = "white")
-        b1close.config(bg = "green")
-    elif bucket_1.valveState == "halfOpen":
-        b1open.config(bg = "red")
-        b1close.config(bg = "red")
+    pass
+    #bucket_1.readSensor(xbee)
+    #txt = (bucket_1.adcValue-bucket_1.tareValue)*float(b1m.get()) + float(b1b.get())
+    #bucket1Density.config(text=str("{:5.3f}".format(calculateDensity(Grams=float(txt)))))
+    #calculateColor(weightGRAMS=float(txt),bucket=bucket_1)
+    #b1frame.config(bg = bucket_1.ledColor)
+    #bucket1Grams.config(text=str(int(txt)))
+    #bucket_1.requestValveState(xbee)
+    #if bucket_1.valveState == "open":
+    #    b1open.config(bg = "green")
+    #    b1close.config(bg = "white")
+    #elif bucket_1.valveState == "close":
+    #    b1open.config(bg = "white")
+    #    b1close.config(bg = "green")
+    #elif bucket_1.valveState == "halfOpen":
+    #    b1open.config(bg = "red")
+    #    b1close.config(bg = "red")
 
 def Calibrate1():
-    update1()
-    bucket_1.corr1 = float(calWeight1.get())/(bucket_1.adcValue-bucket_1.tareValue)
-    b1m.delete(0,END)
-    b1m.insert(0, str(bucket_1.corr1))
+    pass
+    #update1()
+    #bucket_1.corr1 = float(calWeight1.get())/(bucket_1.adcValue-bucket_1.tareValue)
+    #b1m.delete(0,END)
+    #b1m.insert(0, str(bucket_1.corr1))
 
 def Calibrate2():
     update2()
@@ -121,17 +119,17 @@ def nodeDiscovery():
 
 
 b1read = Button(bottomframe, text="read data", bg="white", font=("Helvetica", 20), command=update1)
-b1open = Button(bottomframe, text="open valve", bg="white", font=("Helvetica", 20), command= lambda: bucket_1.openValve(xbee))
-b1close = Button(bottomframe, text="close valve", bg="white", font=("Helvetica", 20), command= lambda: bucket_1.closeValve(xbee))
-b1setcolor = Button(bottomframe, text="set color", bg="white", font=("Helvetica", 20), command= lambda: bucket_1.setColor(bucket_1.adcValue))
+b1open = Button(bottomframe, text="open valve", bg="white", font=("Helvetica", 20))#, command= lambda: bucket_1.openValve(xbee))
+b1close = Button(bottomframe, text="close valve", bg="white", font=("Helvetica", 20))#, command= lambda: bucket_1.closeValve(xbee))
+b1setcolor = Button(bottomframe, text="set color", bg="white", font=("Helvetica", 20))#, command= lambda: bucket_1.setColor(bucket_1.adcValue))
 b1m = Entry(bottomframe, font=("Helvetica", 20))
 b1m.insert(0, bucket_1.corr1)
 b1b = Entry(bottomframe, font=("Helvetica", 20))
 b1b.insert(0, bucket_1.corr2)
-b1tare = Button(bottomframe, text="tare",bg = "white", font=("Helvetica", 20), command = lambda: bucket_1.tare(xbee))
+b1tare = Button(bottomframe, text="tare",bg = "white", font=("Helvetica", 20))#, command = lambda: bucket_1.tare(xbee))
 calWeight1 = Entry(bottomframe, font=("Helvetica", 20))
 calWeight1.insert(0, "Enter Weight (grams)")
-b1cal = Button(bottomframe, text="Calibrate", bg = "white", font=("Helvetica", 20), command = Calibrate1)
+b1cal = Button(bottomframe, text="Calibrate", bg = "white", font=("Helvetica", 20))#, command = Calibrate1)
 
 b2read = Button(bottomframe, text="read data", bg="white", font=("Helvetica", 20), command=update2)
 b2open = Button(bottomframe, text="open valve", bg="white", font=("Helvetica", 20), command=lambda: bucket_2.openValve(xbee))
