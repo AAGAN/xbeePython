@@ -1,4 +1,4 @@
-﻿"""Tkinter"""
+"""Tkinter"""
 
 from Tkinter import *
 import serial
@@ -17,13 +17,15 @@ xbee = ZigBee(ser, escaped = True)
 bucket_1 = Buckets.Buckets(1, '\x00\x13\xA2\x00\x40\xC3\x35\x3F', '\xFF\xFE', 1, 0, 'black', xbee)
 bucket_2 = Buckets.Buckets(2, '\x00\x13\xA2\x00\x40\xCA\xAE\x7D', '\xFF\xFE', 2.2, 0, 'black', xbee)
 
+initialize = 0
+
 root = Tk()
 
 topframe = Frame(root, bd=5,bg="white")
 topframe.grid(row=0,column=0)
 
-b1frame = Frame(topframe, height = 100, width = 100 , bd = 4 , bg = bucket_1.ledColor, relief = RAISED, padx=10,pady=10)
-b2frame = Frame(topframe, height = 100, width = 100 , bd = 4 , bg = bucket_2.ledColor, relief = RAISED,padx=10,pady=10)
+b1frame = Frame(topframe,  bd = 4 , bg = bucket_1.ledColor, relief = RAISED, padx=10,pady=10)
+b2frame = Frame(topframe,  bd = 4 , bg = bucket_2.ledColor, relief = RAISED,padx=10,pady=10)
 
 b1frame.grid(row = 0,column =0)
 b2frame.grid(row =0,column=1)
@@ -34,11 +36,12 @@ bottomframe.grid(row=1,column=0)
 def update2():
     bucket_2.readSensor(xbee)
     txt = (bucket_2.adcValue-bucket_2.tareValue)*float(b2m.get()) + float(b2b.get())
-    bucket2.config(text=str(calculateDensity(Grams=float(txt))))
+    bucket2Density.config(text=str(calculateDensity(Grams=float(txt))))
     calculateColor(weightGRAMS=float(txt),bucket=bucket_2)
     b2frame.config(bg = bucket_2.ledColor)
-    calWeight2.delete(0,END)
-    calWeight2.insert(0, str(txt))
+    bucket2Grams.config(text=str(txt))
+    #calWeight2.delete(0,END)
+    #calWeight2.insert(0, str(txt))
     bucket_2.requestValveState(xbee)
     if bucket_2.valveState == "open":
         b2open.config(bg = "green")
@@ -53,12 +56,13 @@ def update2():
 def update1():
     bucket_1.readSensor(xbee)
     txt = (bucket_1.adcValue-bucket_1.tareValue)*float(b1m.get()) + float(b1b.get())
-    bucket1.config(text=str(calculateDensity(Grams=float(txt))))
+    bucket1Density.config(text=str(calculateDensity(Grams=float(txt))))
     calculateColor(weightGRAMS=float(txt),bucket=bucket_1)
     b1frame.config(bg = bucket_1.ledColor)
-    calWeight1.delete(0,END)
-    calWeight1.insert(0,str(txt))
-    #bucket_1.requestValveState(xbee)
+    bucket1Grams.config(text=str(txt))
+    #calWeight1.delete(0,END)
+    #calWeight1.insert(0,str(txt))
+    bucket_1.requestValveState(xbee)
     if bucket_1.valveState == "open":
         b1open.config(bg = "green")
         b1close.config(bg = "white")
@@ -105,37 +109,53 @@ def calculateColor(weightGRAMS, duration = 20, area = 1, bucket=None):
     # print color
     bucket.ledColor = color
 
-b1read = Button(bottomframe, text="read data", bg="white", command=update1)
-b1open = Button(bottomframe, text="open valve", bg="white", command= lambda: bucket_1.openValve(xbee))
-b1close = Button(bottomframe, text="close valve", bg="white", command= lambda: bucket_1.closeValve(xbee))
-b1setcolor = Button(bottomframe, text="set color", bg="white", command= lambda: bucket_1.setColor(bucket_1.adcValue))
-b1m = Entry(bottomframe)
+def nodeDiscovery():
+    xbee.at(command = 'ND')
+    time.sleep(0.2)
+    try:
+        response = xbee.wait_read_frame(20)
+        if response['id'] == 'rx':
+            pass
+    except:
+        pass
+
+
+b1read = Button(bottomframe, text="read data", bg="white", font=("Helvetica", 20), command=update1)
+b1open = Button(bottomframe, text="open valve", bg="white", font=("Helvetica", 20), command= lambda: bucket_1.openValve(xbee))
+b1close = Button(bottomframe, text="close valve", bg="white", font=("Helvetica", 20), command= lambda: bucket_1.closeValve(xbee))
+b1setcolor = Button(bottomframe, text="set color", bg="white", font=("Helvetica", 20), command= lambda: bucket_1.setColor(bucket_1.adcValue))
+b1m = Entry(bottomframe, font=("Helvetica", 20))
 b1m.insert(0, bucket_1.corr1)
-b1b = Entry(bottomframe)
+b1b = Entry(bottomframe, font=("Helvetica", 20))
 b1b.insert(0, bucket_1.corr2)
-b1tare = Button(bottomframe, text="tare",bg = "white", command = lambda: bucket_1.tare(xbee))
-calWeight1 = Entry(bottomframe)
+b1tare = Button(bottomframe, text="tare",bg = "white", font=("Helvetica", 20), command = lambda: bucket_1.tare(xbee))
+calWeight1 = Entry(bottomframe, font=("Helvetica", 20))
 calWeight1.insert(0, "Enter Weight (grams)")
-b1cal = Button(bottomframe, text="Calibrate", bg = "white", command = Calibrate1)
+b1cal = Button(bottomframe, text="Calibrate", bg = "white", font=("Helvetica", 20), command = Calibrate1)
 
-b2read = Button(bottomframe, text="read data", bg="white", command=update2)
-b2open = Button(bottomframe, text="open valve", bg="white", command=lambda: bucket_2.openValve(xbee))
-b2close = Button(bottomframe, text="close valve", bg="white", command=lambda: bucket_2.closeValve(xbee))
-b2setcolor = Button(bottomframe, text="set color", bg="white", command=lambda: bucket_2.setColor(bucket_2.adcValue))
-b2m = Entry(bottomframe)
+b2read = Button(bottomframe, text="read data", bg="white", font=("Helvetica", 20), command=update2)
+b2open = Button(bottomframe, text="open valve", bg="white", font=("Helvetica", 20), command=lambda: bucket_2.openValve(xbee))
+b2close = Button(bottomframe, text="close valve", bg="white", font=("Helvetica", 20), command=lambda: bucket_2.closeValve(xbee))
+b2setcolor = Button(bottomframe, text="set color", bg="white", font=("Helvetica", 20), command=lambda: bucket_2.setColor(bucket_2.adcValue))
+b2m = Entry(bottomframe, font=("Helvetica", 20))
 b2m.insert(0,bucket_2.corr1)
-b2b = Entry(bottomframe)
+b2b = Entry(bottomframe, font=("Helvetica", 20))
 b2b.insert(0,bucket_2.corr2)
-b2tare = Button(bottomframe, text="tare",bg = "white", command = lambda: bucket_2.tare(xbee))
-calWeight2 = Entry(bottomframe)
+b2tare = Button(bottomframe, text="tare",bg = "white", font=("Helvetica", 20), command = lambda: bucket_2.tare(xbee))
+calWeight2 = Entry(bottomframe, font=("Helvetica", 20))
 calWeight2.insert(0, "Enter Weight (grams)")
-b2cal = Button(bottomframe, text="Calibrate",bg="white", command = Calibrate2)
+b2cal = Button(bottomframe, text="Calibrate",bg="white", font=("Helvetica", 20), command = Calibrate2)
 
-bucket1 = Label(b1frame, text="Bucket 1",bg = "white")
-bucket2 = Label(b2frame, text="Bucket 2 ",bg = "white")
+bucket1Density = Label(b1frame, text="Bucket 1 (Density)",bg = "white", font=("Helvetica", 20))
+bucket2Density = Label(b2frame, text="Bucket 2 (Density)",bg = "white", font=("Helvetica", 20))
 
-bucket1.grid(row=0,column=0,padx=15,pady=20)
-bucket2.grid(row=0,column=1,padx=15,pady=20)
+bucket1Grams = Label(b1frame, text="Bucket 1 (Grams)",bg = "white", font=("Helvetica", 20))
+bucket2Grams = Label(b2frame, text="Bucket 2 (Grams)",bg = "white", font=("Helvetica", 20))
+
+bucket1Density.grid(row=0,column=0,padx=15,pady=20)
+bucket2Density.grid(row=0,column=1,padx=15,pady=20)
+bucket1Grams.grid(row=1,column=0,padx=15,pady=20)
+bucket2Grams.grid(row=1,column=1,padx=15,pady=20)
 
 b1read.grid(row=1, column=0,padx=5,pady=5)
 b1open.grid(row=2,column=0)
@@ -156,6 +176,10 @@ b2b.grid(row=6,column=1)
 b2tare.grid(row=7,column=1)
 calWeight2.grid(row=8,column=1)
 b2cal.grid(row=9,column=1)
+
+if initialize == 0:
+    pass
+
 
 root.mainloop()
 
