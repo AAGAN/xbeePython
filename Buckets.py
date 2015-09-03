@@ -107,7 +107,7 @@ class Buckets:
                     if response['source_addr_long'] == self.address64:
                         Response = response['rf_data'] 
                         Response = float(struct.unpack('H',Response)[0])
-                        print Response
+                        #print Response
                         if Response == 0:
                             self.valveState = "open"
                         elif Response == 1:
