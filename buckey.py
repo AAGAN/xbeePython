@@ -8,7 +8,7 @@ from xbee import ZigBee
 import Buckets
 import random
 
-port = 'COM29'
+port = 'COM3'
 baud_rate = 9600
 
 ser = serial.Serial(port, baud_rate)
@@ -34,6 +34,7 @@ bottomframe = Frame(root)
 bottomframe.grid(row=1,column=0)
 
 def update2():
+    print "wait..."
     bucket_2.readSensor(xbee)
     txt = (bucket_2.adcValue-bucket_2.tareValue)*float(b2m.get()) + float(b2b.get())
     bucket2Density.config(text=str("{:5.3f}".format(calculateDensity(Grams=float(txt)))))
@@ -50,6 +51,7 @@ def update2():
     elif bucket_2.valveState == "halfOpen":
         b2open.config(bg = "red")
         b2close.config(bg = "red")
+    print "done!"
 
 def update1():
     pass
@@ -78,10 +80,12 @@ def Calibrate1():
     #b1m.insert(0, str(bucket_1.corr1))
 
 def Calibrate2():
+    print "Calibrating..."
     update2()
     bucket_2.corr1 = float(calWeight2.get())/(bucket_2.adcValue-bucket_2.tareValue)
     b2m.delete(0,END)
     b2m.insert(0, str(bucket_2.corr1))
+    print "done!"
 
 def calculateDensity(Grams,duration=20,area = 1):
     weightlbs = Grams*0.00220462
