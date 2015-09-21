@@ -8,7 +8,7 @@ from xbee import ZigBee
 import Buckets
 import random
 
-port = 'COM3'
+port = 'COM29'
 baud_rate = 9600
 
 ser = serial.Serial(port, baud_rate)

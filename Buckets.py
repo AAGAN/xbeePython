@@ -93,12 +93,14 @@ class Buckets:
 
     def tare(self, xbee):
         print "taring, wait..."
-        temp = 0.0
-        for i in range(1,11):
-            self.readSensor(xbee)
-            temp += self.adcValue
-            time.sleep(2)
-        self.tareValue = temp / 10.0
+        #temp = 0.0
+        #for i in range(1,11):
+        #    self.readSensor(xbee)
+        #    temp += self.adcValue
+        #    time.sleep(2)
+        #self.tareValue = temp / 10.0
+        self.readSensor(xbee)
+        self.tareValue = self.adcValue
         print "done!"
 
     def requestValveState(self,xbee):
