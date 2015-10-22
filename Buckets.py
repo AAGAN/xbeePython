@@ -6,8 +6,10 @@ class Buckets:
 
     adcValue = 0.0
     weightValue = 0.0
+    densityValue = 0.0
     tareValue=0.0
     valveState = "halfOpen"
+    filename = "bucket.csv"
 
     def __init__(self, num = 0, addr64 = '\x00\x00\x00\x00\x00\x00\x00\x00', addr16 = '\xFF\xFE', cor1 = 1, cor2 = 0, color = 'red', xbee = None):
         self.number = num
@@ -51,9 +53,6 @@ class Buckets:
             self.ledColor = '\x6E\x32'
         else:
             self.ledColor = '\x6E\x33'
-
-    def setColor(self, adcValue):
-        pass
 
     def requestAddr16(self):
         pass
