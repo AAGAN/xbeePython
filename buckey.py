@@ -14,8 +14,8 @@ baud_rate = 9600
 ser = serial.Serial(port, baud_rate)
 xbee = ZigBee(ser, escaped = True)
 
-bucket_1 = Buckets.Buckets(1, '\x00\x13\xA2\x00\x40\xC3\x35\x3F', '\xFF\xFE', 2.2, 0, 'black', xbee)
-bucket_2 = Buckets.Buckets(2, '\x00\x13\xA2\x00\x40\xCA\xAE\x7D', '\xFF\xFE', 2.2, 0, 'black', xbee)
+bucket_1 = Buckets.Buckets(1, '\x00\x13\xA2\x00\x40\xC3\x35\x3F', '\xFF\xFE', 2.210272, 0, 'black', xbee)
+bucket_2 = Buckets.Buckets(2, '\x00\x13\xA2\x00\x40\xCA\xAE\x7D', '\xFF\xFE', 2.205442, 0, 'black', xbee)
 
 bucket_1.filename = 'bucket1.csv'
 bucket_2.filename = 'bucket2.csv'
